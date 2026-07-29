@@ -25,9 +25,15 @@ Start here:
   Windows  double-click "Rubric Loom.bat"
   Linux    bash rubric_loom_launcher.sh
 
-Rubric Loom checks the local environment and asks before installing anything.
-It does not use AI, upload course material, import into Brightspace, or attach
-rubrics to activities.
+Rubric Loom first looks for an existing supported Python 3.11-3.13
+installation and reuses it. Python itself is not reinstalled when a supported
+copy is already present. Before asking you to choose Unravel or Weave, the
+Loom checks its required support packages and, if needed, offers to create a
+private environment under user-data/runtime. It asks before installing
+anything.
+
+Rubric Loom does not use AI, upload course material, import into Brightspace,
+or attach rubrics to activities.
 
 Updates are installed beside the active version. The launcher verifies the
 GitHub asset digest, checksum sidecar, repository identities, exact commits,
@@ -42,10 +48,12 @@ Maintenance:
   bash rubric_loom_launcher.sh --update
   bash rubric_loom_launcher.sh --rollback
 
-This release is unsigned. macOS may require right-clicking
-"Rubric Loom.command" and choosing Open on first launch. Windows or
-institution-managed devices may show an equivalent trust prompt. Do not weaken
-system-wide security settings.
+This release is unsigned. If macOS blocks "Rubric Loom.command", try to open
+it once and dismiss the warning. Then open System Settings > Privacy &
+Security, scroll to Security, choose Open Anyway, authenticate, and confirm
+Open. Windows or institution-managed devices may show an equivalent trust
+prompt. Use an exception only for a release downloaded from this project's
+GitHub page; do not weaken system-wide security settings.
 """
 
 TOP_COMMAND = """\

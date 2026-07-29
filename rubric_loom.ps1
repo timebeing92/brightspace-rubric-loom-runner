@@ -8,6 +8,7 @@ $ErrorActionPreference = "Stop"
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $MinVersion = [Version]"3.11"
+$MaxVersion = [Version]"3.14"
 $AssumeYes = ($args -contains "--yes") -or ($args -contains "-y")
 
 function Read-YesNo([string]$Prompt, [bool]$Default = $false) {
@@ -27,7 +28,8 @@ function Test-Python([string[]]$Command) {
         $probeArgs += @("-c", "import sys; print('.'.join(map(str, sys.version_info[:2])))")
         $probe = & $Command[0] @probeArgs 2>$null
         if ($LASTEXITCODE -eq 0 -and $probe) {
-            return ([Version]("$probe".Trim()) -ge $MinVersion)
+            $version = [Version]("$probe".Trim())
+            return ($version -ge $MinVersion -and $version -lt $MaxVersion)
         }
     } catch { }
     return $false
@@ -68,9 +70,9 @@ function Find-Python {
 }
 
 function Install-Python {
-    Write-Host "Python $MinVersion+ was not found."
+    Write-Host "A supported Python 3.11-3.13 installation was not found."
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Host "winget was not found. Install Python 3.11+ from https://www.python.org/downloads/ (check 'Add python.exe to PATH'), then rerun this launcher."
+        Write-Host "winget was not found. Install Python 3.11-3.13 from https://www.python.org/downloads/ (check 'Add python.exe to PATH'), then rerun this launcher."
         return $false
     }
     if (-not (Read-YesNo "Install Python with winget now?" $true)) { return $false }
@@ -86,7 +88,7 @@ if (-not $Python) {
         $Python = Find-Python
     }
     if (-not $Python) {
-        Write-Host "Python 3.11+ is still not on PATH in this window." -ForegroundColor Yellow
+        Write-Host "Python 3.11-3.13 is still not on PATH in this window." -ForegroundColor Yellow
         Write-Host "Open a NEW terminal (so PATH refreshes) and rerun this launcher."
         exit 1
     }

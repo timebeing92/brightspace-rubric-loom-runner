@@ -75,10 +75,16 @@ Start here:
   Windows  double-click "Rubric Loom.bat"
   Linux    bash brightspace-rubric-loom-runner/rubric_loom.sh
 
-On the first run, Rubric Loom checks for Python 3.11+ and its required
-packages. It asks before installing anything and keeps Python packages in a
-private environment inside user-data/runtime. Your inputs and outputs remain
-on this computer.
+On the first run, Rubric Loom looks for an existing supported Python
+3.11-3.13 installation and reuses it. Python itself is not reinstalled when a
+supported copy is already present. Before asking you to choose Unravel or
+Weave, the Loom checks its required support packages and, if needed, offers
+to create a private environment inside user-data/runtime. It asks before
+installing anything. Your inputs and outputs remain on this computer.
+
+If macOS blocks "Rubric Loom.command", try to open it once and dismiss the
+warning. Then open System Settings > Privacy & Security, scroll to Security,
+choose Open Anyway, authenticate, and confirm Open.
 
 Rubric Loom does not use AI. Versioned Python software reads declared
 Brightspace package structures and applies explicit validation and packaging

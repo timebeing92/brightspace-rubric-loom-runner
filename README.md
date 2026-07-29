@@ -20,10 +20,11 @@ run. Each course keeps its own output folder and run log. Weave shows the
 producer’s interpretation and scoring evidence before it builds anything,
 then requires the named approval `WEAVE`.
 
-Rubric Loom has no AI component. It is deterministic, rules-based Python
-software engineered against known Brightspace/D2L package structures. Your
-files stay on your computer. The same input meets the same declared rules
-every time, and an unfamiliar structure is reported instead of guessed.
+Rubric Loom is purely deterministic software, running locally in Python. It is
+engineered against known Brightspace/D2L package structures. No AI model reads
+or interprets your files, and your files stay on your computer. The same input
+meets the same declared rules every time; an unfamiliar structure is reported
+instead of guessed.
 
 ## Download and start
 
@@ -39,15 +40,24 @@ The recommended download is:
 
 Unzip it before opening the Loom. Then:
 
-- **macOS:** double-click `Rubric Loom.command`. If macOS blocks the unsigned
-  file, right-click it once and choose **Open**.
+- **macOS:** double-click `Rubric Loom.command`. If macOS blocks it, try once,
+  dismiss the warning, then open **System Settings > Privacy & Security**.
+  Scroll to **Security**, choose **Open Anyway**, authenticate, and confirm
+  **Open**. Apple's
+  [current instructions](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac)
+  note that **Open Anyway** is normally available for about an hour after the
+  blocked attempt.
 - **Windows:** double-click `Rubric Loom.bat`.
 - **Linux:** run `bash rubric_loom_launcher.sh`.
 
-On first run, the launcher checks for Python 3.11 or newer. If Python or a
-required package is missing, it explains what is needed and asks before
-installing anything. Python packages go into a private environment under
-`user-data/runtime`; they are not installed into the system Python.
+On first run, the launcher looks for an existing supported Python
+3.11–3.13 installation and reuses it. Python itself is not reinstalled when a
+supported copy is already present. The Loom then checks its required support
+packages before asking you to choose Unravel or Weave or provide a path. If
+needed, it offers to create a private environment under `user-data/runtime`
+and install the pinned packages there—not into the system Python. Only when no
+supported Python is found does the launcher offer to install Python, and it
+asks first.
 
 The managed package keeps program versions and user work separate:
 

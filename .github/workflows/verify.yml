@@ -67,6 +67,7 @@ jobs:
       - name: Build portable and managed packages twice
         shell: bash
         run: |
+          version="$(tr -d '[:space:]' < VERSION)"
           python scripts/make_release_bundle.py \
             --runner-ref HEAD \
             --bundle-ref HEAD \
@@ -87,19 +88,20 @@ jobs:
             --bundle-ref HEAD \
             --bundle-dir brightspace-rubric-bundle \
             --output-dir dist/two
-          cmp dist/one/rubric-loom-v1.0.0.zip \
-            dist/two/rubric-loom-v1.0.0.zip
-          cmp dist/one/rubric-loom-managed-v1.0.0.zip \
-            dist/two/rubric-loom-managed-v1.0.0.zip
-          (cd dist/one && sha256sum -c rubric-loom-v1.0.0.zip.sha256)
+          cmp "dist/one/rubric-loom-v${version}.zip" \
+            "dist/two/rubric-loom-v${version}.zip"
+          cmp "dist/one/rubric-loom-managed-v${version}.zip" \
+            "dist/two/rubric-loom-managed-v${version}.zip"
+          (cd dist/one && sha256sum -c "rubric-loom-v${version}.zip.sha256")
           (cd dist/one && \
-            sha256sum -c rubric-loom-managed-v1.0.0.zip.sha256)
+            sha256sum -c "rubric-loom-managed-v${version}.zip.sha256")
       - name: Inspect and health-check managed package
         shell: bash
         run: |
+          version="$(tr -d '[:space:]' < VERSION)"
           mkdir extracted
-          unzip -q dist/one/rubric-loom-managed-v1.0.0.zip -d extracted
-          root="extracted/rubric-loom-managed-v1.0.0"
+          unzip -q "dist/one/rubric-loom-managed-v${version}.zip" -d extracted
+          root="extracted/rubric-loom-managed-v${version}"
           python "$root/launcher/stable_launcher.py" \
             --install-root "$root" \
             --health
