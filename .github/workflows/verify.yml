@@ -71,34 +71,34 @@ jobs:
             --runner-ref HEAD \
             --bundle-ref HEAD \
             --bundle-dir brightspace-rubric-bundle \
-            --output-dir dist-one
+            --output-dir dist/one
           python scripts/make_managed_install_bundle.py \
             --runner-ref HEAD \
             --bundle-ref HEAD \
             --bundle-dir brightspace-rubric-bundle \
-            --output-dir dist-one
+            --output-dir dist/one
           python scripts/make_release_bundle.py \
             --runner-ref HEAD \
             --bundle-ref HEAD \
             --bundle-dir brightspace-rubric-bundle \
-            --output-dir dist-two
+            --output-dir dist/two
           python scripts/make_managed_install_bundle.py \
             --runner-ref HEAD \
             --bundle-ref HEAD \
             --bundle-dir brightspace-rubric-bundle \
-            --output-dir dist-two
-          cmp dist-one/rubric-loom-v1.0.0.zip \
-            dist-two/rubric-loom-v1.0.0.zip
-          cmp dist-one/rubric-loom-managed-v1.0.0.zip \
-            dist-two/rubric-loom-managed-v1.0.0.zip
-          (cd dist-one && sha256sum -c rubric-loom-v1.0.0.zip.sha256)
-          (cd dist-one && \
+            --output-dir dist/two
+          cmp dist/one/rubric-loom-v1.0.0.zip \
+            dist/two/rubric-loom-v1.0.0.zip
+          cmp dist/one/rubric-loom-managed-v1.0.0.zip \
+            dist/two/rubric-loom-managed-v1.0.0.zip
+          (cd dist/one && sha256sum -c rubric-loom-v1.0.0.zip.sha256)
+          (cd dist/one && \
             sha256sum -c rubric-loom-managed-v1.0.0.zip.sha256)
       - name: Inspect and health-check managed package
         shell: bash
         run: |
           mkdir extracted
-          unzip -q dist-one/rubric-loom-managed-v1.0.0.zip -d extracted
+          unzip -q dist/one/rubric-loom-managed-v1.0.0.zip -d extracted
           root="extracted/rubric-loom-managed-v1.0.0"
           python "$root/launcher/stable_launcher.py" \
             --install-root "$root" \
