@@ -20,6 +20,8 @@ def test_user_onboarding_names_both_doors_and_the_no_ai_boundary() -> None:
     assert "does not use AI" in text
     assert "does not import" not in text
     assert "cannot import" in text
+    assert "Python itself is not reinstalled" in text
+    assert "Privacy & Security" in text
 
 
 def test_release_runtime_does_not_reimplement_rubric_semantics() -> None:

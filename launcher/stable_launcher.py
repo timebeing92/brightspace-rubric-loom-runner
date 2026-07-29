@@ -13,7 +13,7 @@ import install_state
 import install_release
 import network_update
 
-LAUNCHER_VERSION = "1.0.0"
+LAUNCHER_VERSION = "1.0.1"
 RESTART_EXIT_CODE = 75
 MAX_RESTARTS = 1
 

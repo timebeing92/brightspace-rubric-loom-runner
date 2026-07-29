@@ -19,7 +19,7 @@ python_ok() {
   local py="$1"
   "$py" - <<'PY' >/dev/null 2>&1
 import sys
-raise SystemExit(0 if sys.version_info >= (3, 11) else 1)
+raise SystemExit(0 if (3, 11) <= sys.version_info[:2] < (3, 14) else 1)
 PY
 }
 
@@ -59,7 +59,7 @@ ask_yes() {
 }
 
 install_python() {
-  echo "Python ${MIN_MAJOR}.${MIN_MINOR}+ was not found."
+  echo "A supported Python 3.11-3.13 installation was not found."
   case "$(uname -s)" in
     Darwin)
       if command -v brew >/dev/null 2>&1; then
@@ -68,7 +68,7 @@ install_python() {
           return 0
         fi
       else
-        echo "Homebrew was not found. Install Python 3.11+ from https://www.python.org/downloads/ or install Homebrew first."
+        echo "Homebrew was not found. Install Python 3.11-3.13 from https://www.python.org/downloads/ or install Homebrew first."
       fi
       ;;
     Linux)
@@ -94,11 +94,11 @@ install_python() {
           return 0
         fi
       else
-        echo "No supported package manager was found. Install Python 3.11+ manually and rerun this command."
+        echo "No supported package manager was found. Install Python 3.11-3.13 manually and rerun this command."
       fi
       ;;
     *)
-      echo "Unsupported platform for automatic Python installation. Install Python 3.11+ manually and rerun this command."
+      echo "Unsupported platform for automatic Python installation. Install Python 3.11-3.13 manually and rerun this command."
       ;;
   esac
   return 1
@@ -106,12 +106,12 @@ install_python() {
 
 if ! PY="$(find_python)"; then
   install_python || {
-    echo "Cannot continue without Python ${MIN_MAJOR}.${MIN_MINOR}+." >&2
+    echo "Cannot continue without Python 3.11-3.13." >&2
     exit 1
   }
   if ! PY="$(find_python)"; then
-    echo "Python installation did not place a Python ${MIN_MAJOR}.${MIN_MINOR}+ command on PATH." >&2
-    echo "Set PYTHON=/path/to/python3.11+ and rerun this command." >&2
+    echo "Python installation did not place a supported Python command on PATH." >&2
+    echo "Set PYTHON=/path/to/python3.11-3.13 and rerun this command." >&2
     exit 1
   fi
 fi
