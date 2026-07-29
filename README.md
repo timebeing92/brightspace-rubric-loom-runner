@@ -1,22 +1,171 @@
 # Rubric Loom
 
-This repository is the user-facing local runner for Rubric Loom. It will pair
-one guided terminal application with one exact
+<p align="center">
+  <img src="docs/assets/rubric-loom-terminal.svg"
+       alt="Color pixel-art Rubric Loom with warp threads, woven cloth, and a shuttle"
+       width="620">
+</p>
+
+Rubric Loom is a guided local tool for people who need to inspect, revise, or
+move Brightspace rubrics without hand-editing D2L XML. It opens with two clear
+choices:
+
+| Door | Bring | Take away |
+| --- | --- | --- |
+| **Unravel** | A Brightspace course-export ZIP, an unpacked export folder, or a bare `rubrics_d2l.xml` | A review workbook, structured rubric JSON, and a reviewer DOCX |
+| **Weave** | A completed rubric in a supported DOCX table, Markdown table, or JSON format | A reviewed and validated rubric-only Brightspace import package, plus its mapping, diagnostics, and run receipt |
+
+Unravel can read one export or inventory a folder of exports in a single bulk
+run. Each course keeps its own output folder and run log. Weave shows the
+producer’s interpretation and scoring evidence before it builds anything,
+then requires the named approval `WEAVE`.
+
+Rubric Loom has no AI component. It is deterministic, rules-based Python
+software engineered against known Brightspace/D2L package structures. Your
+files stay on your computer. The same input meets the same declared rules
+every time, and an unfamiliar structure is reported instead of guessed.
+
+## Download and start
+
+Use the
+[`brightspace-rubric-loom-runner` Releases page](https://github.com/timebeing92/brightspace-rubric-loom-runner/releases),
+not the green **Code > Download ZIP** button. GitHub’s source-code ZIP contains
+this repository alone; a Rubric Loom release contains the exact runner and
+Rubric Bundle version that were tested together.
+
+The recommended download is:
+
+`rubric-loom-managed-v<VERSION>.zip`
+
+Unzip it before opening the Loom. Then:
+
+- **macOS:** double-click `Rubric Loom.command`. If macOS blocks the unsigned
+  file, right-click it once and choose **Open**.
+- **Windows:** double-click `Rubric Loom.bat`.
+- **Linux:** run `bash rubric_loom_launcher.sh`.
+
+On first run, the launcher checks for Python 3.11 or newer. If Python or a
+required package is missing, it explains what is needed and asks before
+installing anything. Python packages go into a private environment under
+`user-data/runtime`; they are not installed into the system Python.
+
+The managed package keeps program versions and user work separate:
+
+```text
+rubric-loom-managed-v<VERSION>/
+├── Rubric Loom.command
+├── Rubric Loom.bat
+├── START_HERE.txt
+├── current.json
+├── versions/
+│   └── <VERSION>/
+│       ├── brightspace-rubric-loom-runner/
+│       ├── brightspace-rubric-bundle/
+│       └── RELEASE_MANIFEST.json
+└── user-data/
+```
+
+Inputs, outputs, remembered settings, logs, and the private Python environment
+stay under `user-data/`. A later update installs a complete release beside the
+current one; rollback changes the active pointer without deleting user work.
+
+The smaller portable ZIP, `rubric-loom-v<VERSION>.zip`, contains the same
+tested runner/bundle pair without side-by-side update management. It is useful
+for a temporary or controlled installation.
+
+## What the Loom does—and does not do
+
+A Brightspace course export is an ordinary ZIP file. Its `imsmanifest.xml`
+maps package resources, and D2L XML files carry component details such as
+rubrics. Unravel follows those declared structures and preserves authored
+rubric wording and values in review-ready formats. Bulk Unravel repeats that
+same producer run for each immediate export in the folder; it does not add a
+second extraction implementation.
+
+Weave accepts the documented rubric source shapes, normalizes them to the
+versioned authoring contract, validates scoring and weights, constructs
+`rubrics_d2l.xml`, and validates the final rubric-only package. Missing scoring
+or weights stop the build unless you explicitly select a permitted fallback.
+
+Rubric Loom does not:
+
+- import anything into Brightspace;
+- attach an imported rubric to an assignment, discussion, or quiz;
+- invent scoring silently;
+- change a course when you download or complete a template; or
+- replace human review.
+
+After Weave succeeds, you review the output, import the package yourself, and
+attach the rubric manually in Brightspace.
+
+## Updates and verification
+
+The Loom checks the public GitHub release feed at most once per day. Current,
+offline, and failed checks stay quiet. When a newer release exists, the Loom
+shows the installed and available versions; it does not replace files without
+your action.
+
+The managed launcher verifies all of the following before activating an
+update:
+
+- the GitHub asset digest and published `.sha256` sidecar agree;
+- the ZIP has one safe top-level folder and contains no path traversal,
+  symbolic links, encrypted members, reserved Windows names, or
+  case-colliding paths;
+- the runner and bundle repository identities and exact commits match the
+  release manifest;
+- critical runtime files match their SHA-256 receipts; and
+- the Unravel, Weave, progress, rubric, authoring, and run-receipt contracts
+  are present and match their receipts.
+
+Useful managed-install commands:
+
+```bash
+bash rubric_loom_launcher.sh --health
+bash rubric_loom_launcher.sh --list-versions
+bash rubric_loom_launcher.sh --update
+bash rubric_loom_launcher.sh --rollback
+```
+
+## Architecture and source boundary
+
+This repository owns the one-download experience: launchers, environment
+setup, release pairing, update verification, activation, rollback, and
+persistent user-data boundaries. It does not parse Brightspace XML or define
+rubric semantics.
+
 [`brightspace-rubric-bundle`](https://github.com/timebeing92/brightspace-rubric-bundle)
-release so colleagues can download a ZIP, unpack it, and start without cloning
-multiple repositories or navigating the producer's engineering surface.
+is the pinned engine. It owns the Unravel and Weave orchestrators and contains
+byte-receipted copies of the Workbench-owned rubric schemas and producer
+implementation. The bundle records that deeper provenance in its own
+`upstream/workbench_pin.json`; the runner records the exact bundle release,
+commit, schema digests, capability declarations, and runtime digests in
+`RELEASE_MANIFEST.json`.
 
-Rubric Loom has two doors:
+This separation is deliberate:
 
-- **Unravel** reads Brightspace course-export ZIPs, unpacked exports, or bare
-  `rubrics_d2l.xml` files and produces review workbooks, JSON, and DOCX.
-- **Weave** reads supported DOCX, Markdown, or JSON rubric sources and produces
-  a validated rubric-only Brightspace import package after explicit review.
+```text
+coursecraft_workbench
+        │
+        ▼
+brightspace-rubric-bundle
+        │
+        ├── CourseCraft Workshop
+        └── brightspace-rubric-loom-runner
+```
 
-The runner owns launchers, setup, updates, persistent user data, and the
-one-download release experience. Rubric extraction, normalization, scoring,
-XML construction, package validation, and progress contracts remain in the
-bundle.
+Changes to rubric interpretation, scoring, XML construction, or validation
+must land through the Workbench and Rubric Bundle source boundary. Runner code
+may supervise the engine and present its reported results; it may not recreate
+those semantics.
 
-Status: initial runner implementation in progress. No public runner release has
-been cut yet.
+See [ADOPTION_MAP.md](ADOPTION_MAP.md) for the ownership map and
+[NOTICE.md](NOTICE.md) for attribution and provenance.
+
+## License
+
+Rubric Loom Runner is licensed under
+`AGPL-3.0-or-later`; see [LICENSE](LICENSE). Commercial licenses and paid
+services are available by agreement for organizations that need different
+terms, private deployment rights, integration support, maintenance, or
+procurement assurances; see [COMMERCIAL.md](COMMERCIAL.md).

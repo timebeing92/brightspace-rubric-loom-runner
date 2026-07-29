@@ -48,8 +48,8 @@ Before committing implementation changes, run:
 
 ```bash
 python3 -m pytest
-python3 scripts/make_portable_release.py --runner-ref HEAD --bundle-ref <exact-ref>
-python3 scripts/make_managed_release.py --runner-ref HEAD --bundle-ref <exact-ref>
+python3 scripts/make_release_bundle.py --runner-ref HEAD --bundle-ref <exact-ref>
+python3 scripts/make_managed_install_bundle.py --runner-ref HEAD --bundle-ref <exact-ref>
 ```
 
 Release construction and public publication remain separate claims.

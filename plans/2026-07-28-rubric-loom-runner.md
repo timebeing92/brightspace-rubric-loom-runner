@@ -6,8 +6,9 @@ Create a colleague-facing, one-download Rubric Loom application analogous to
 Blueprint Wizard while keeping rubric semantics in
 `brightspace-rubric-bundle`.
 
-The initial runner release pairs with Rubric Bundle `v1.3.0`, commit
-`4916b2507266d68e451e33e858d8bd644365bc34`.
+The initial runner release pairs with Rubric Bundle `v1.3.1`. The exact
+annotated tag commit is recorded in the compatibility lock and each release
+manifest after the bundle compatibility PR is merged.
 
 ## Architecture
 
@@ -57,7 +58,7 @@ folder with top-level launchers and `START_HERE.txt`.
 
 ## Transition
 
-Rubric Bundle `v1.3.0` remains available for Workshop and technical consumers.
+Rubric Bundle `v1.3.1` remains available for Workshop and technical consumers.
 Once the runner is verified, ordinary download guidance moves to the runner.
 The bundle's existing terminal entry point remains compatible during the
 transition.

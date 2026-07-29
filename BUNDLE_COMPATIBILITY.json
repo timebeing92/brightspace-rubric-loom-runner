@@ -1,0 +1,9 @@
+{
+  "schema": "coursecraft.rubric_loom_bundle_compatibility/1",
+  "runner_version": "1.0.0",
+  "bundle_repository": "timebeing92/brightspace-rubric-bundle",
+  "bundle_version": "1.3.1",
+  "bundle_ref": "agent/add-runner-runtime-paths",
+  "bundle_commit": "96e59a2c711539613b808d6ccd602db0d1860aab",
+  "status": "release-candidate"
+}
