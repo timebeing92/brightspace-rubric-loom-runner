@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -46,3 +47,17 @@ def test_manifest_contract_is_specific_to_rubric_loom() -> None:
     assert "scripts/run_rubric_bundle.py" in release.BUNDLE_RUNTIME_FILES
     assert "scripts/run_weave_bundle.py" in release.BUNDLE_RUNTIME_FILES
     assert "upstream/workbench_pin.json" in release.BUNDLE_RUNTIME_FILES
+
+
+def test_release_identity_matches_the_exact_bundle_lock() -> None:
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    compatibility = json.loads(
+        (ROOT / "BUNDLE_COMPATIBILITY.json").read_text(encoding="utf-8")
+    )
+    assert compatibility["runner_version"] == version
+    assert compatibility["bundle_version"] == "1.3.2"
+    assert compatibility["bundle_ref"] == "v1.3.2"
+    assert compatibility["bundle_commit"] == (
+        "8c97c7210a816a02e2487b7ae8b4696bc3236618"
+    )
+    assert compatibility["status"] == "released"

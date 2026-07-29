@@ -17,6 +17,11 @@ import stable_launcher  # noqa: E402
 from helpers import make_release_zip, write_installed_version  # noqa: E402
 
 
+def test_stable_launcher_reports_the_runner_release_version() -> None:
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    assert stable_launcher.LAUNCHER_VERSION == version
+
+
 def test_side_by_side_install_and_rollback_preserve_user_data(
     tmp_path: Path,
 ) -> None:
