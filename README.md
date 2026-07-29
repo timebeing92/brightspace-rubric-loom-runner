@@ -144,10 +144,18 @@ setup, release pairing, update verification, activation, rollback, and
 persistent user-data boundaries. It does not parse Brightspace XML or define
 rubric semantics.
 
+CourseCraft Workbench is the upstream living library and development lab for
+the CourseCraft tool family. It curates the authoritative development copies
+of shared schemas and producer code alongside scripts, tests, experiments,
+technical writing, and documentation. Work there may be exploratory; only
+reviewed, verified, production-ready versions are promoted into pinned
+products such as the Rubric Bundle and this runner. People using Rubric Loom
+do not need to access, install, or operate the Workbench.
+
 [`brightspace-rubric-bundle`](https://github.com/timebeing92/brightspace-rubric-bundle)
 is the pinned engine. It owns the Unravel and Weave orchestrators and contains
-byte-receipted copies of the Workbench-owned rubric schemas and producer
-implementation. The bundle records that deeper provenance in its own
+exact promoted copies of the Workbench-owned rubric schemas and producer
+implementation. The bundle records their deeper provenance in its own
 `upstream/workbench_pin.json`; the runner records the exact bundle release,
 commit, schema digests, capability declarations, and runtime digests in
 `RELEASE_MANIFEST.json`.
@@ -155,8 +163,9 @@ commit, schema digests, capability declarations, and runtime digests in
 This separation is deliberate:
 
 ```text
-coursecraft_workbench
-        │
+CourseCraft Workbench
+(living library + development lab)
+        │ reviewed, production-ready tooling
         ▼
 brightspace-rubric-bundle
         │
@@ -165,9 +174,9 @@ brightspace-rubric-bundle
 ```
 
 Changes to rubric interpretation, scoring, XML construction, or validation
-must land through the Workbench and Rubric Bundle source boundary. Runner code
-may supervise the engine and present its reported results; it may not recreate
-those semantics.
+must move through the Workbench’s review and verification process and the
+Rubric Bundle source boundary. Runner code may supervise the engine and
+present its reported results; it may not recreate those semantics.
 
 See [ADOPTION_MAP.md](ADOPTION_MAP.md) for the ownership map and
 [NOTICE.md](NOTICE.md) for attribution and provenance.

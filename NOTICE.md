@@ -3,6 +3,12 @@
 Rubric Loom Runner is a CourseCraft Workbench-family distribution maintained
 by Erik Hanson.
 
+CourseCraft Workbench is the upstream living library and development lab for
+the CourseCraft tool family. It curates authoritative development copies of
+shared schemas and producer code alongside scripts, tests, experiments,
+technical writing, and documentation. Only reviewed, verified,
+production-ready versions are promoted into pinned downstream products.
+
 The runner’s release, installation, and rollback mechanics were adapted from
 the Workbench-owned `brightspace-blueprint-runner`. Rubric Loom terminal art
 and appropriate user documentation were adapted from the Workbench-owned
@@ -15,7 +21,7 @@ digests, capabilities, licensing records, and the persistent user-data
 boundary.
 
 The Rubric Bundle retains the deeper producer provenance, including its
-WorkBench adoption pin and byte-level inventory, in
+Workbench adoption pin and byte-level inventory, in
 `upstream/workbench_pin.json`. The runner intentionally references that record
 instead of duplicating or weakening it.
 

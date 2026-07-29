@@ -1,10 +1,16 @@
 # Rubric Loom adoption map
 
+CourseCraft Workbench is the upstream living library and development lab for
+the CourseCraft tool family. It curates authoritative development copies of
+shared schemas and producer code together with scripts, tests, experiments,
+technical writing, and documentation. Only reviewed, verified,
+production-ready versions are promoted into pinned downstream products.
+
 | Concern | Authority | Runner treatment |
 | --- | --- | --- |
-| Rubric schemas and normalization | `coursecraft_workbench` | Never reimplemented |
-| Brightspace rubric extraction | `coursecraft_workbench`, promoted through `brightspace-rubric-bundle` | Invoked through the bundle’s Unravel orchestrator |
-| Scoring policy, rubric XML, and package validation | `coursecraft_workbench`, promoted through `brightspace-rubric-bundle` | Invoked through the bundle’s Weave orchestrator |
+| Rubric schemas and normalization | CourseCraft Workbench (`coursecraft_workbench`) | Never reimplemented |
+| Brightspace rubric extraction | CourseCraft Workbench, promoted through `brightspace-rubric-bundle` | Invoked through the bundle’s Unravel orchestrator |
+| Scoring policy, rubric XML, and package validation | CourseCraft Workbench, promoted through `brightspace-rubric-bundle` | Invoked through the bundle’s Weave orchestrator |
 | Guided Unravel/Weave terminal journey | `brightspace-rubric-bundle` | Launched as the pinned engine |
 | Release pairing and provenance manifest | `brightspace-rubric-loom-runner` | Owned here |
 | Environment discovery and private dependency setup | Runner launcher plus bundle bootstrap | Composed here; dependencies remain bundle-pinned |
