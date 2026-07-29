@@ -19,8 +19,8 @@ rubrics for later import. It opens with two clear choices:
 Unravel can read one export or inventory a folder of exports in a single bulk
 run. Each course retains its own output folder and run log. Weave shows how
 its rules read the completed rubric source—including its content, scoring,
-and weights—before it builds anything, then requires the named approval
-`WEAVE`.
+and weights. Before building the package, Weave asks you to verify what it
+read and approve the build.
 
 Rubric Loom is purely deterministic software, running locally in Python. It is
 engineered against known Brightspace/D2L package structures. No AI model reads
