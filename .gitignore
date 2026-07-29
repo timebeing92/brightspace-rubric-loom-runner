@@ -5,4 +5,5 @@ __pycache__/
 dist/
 output/
 user-data/
+brightspace-rubric-bundle/
 .DS_Store
