@@ -6,9 +6,9 @@ Create a colleague-facing, one-download Rubric Loom application analogous to
 Blueprint Wizard while keeping rubric semantics in
 `brightspace-rubric-bundle`.
 
-The initial runner release pairs with Rubric Bundle `v1.3.1`. The exact
-annotated tag commit is recorded in the compatibility lock and each release
-manifest after the bundle compatibility PR is merged.
+The initial runner release pairs with Rubric Bundle `v1.3.1`, commit
+`0879e200e8eec75c224e786523c193f1a25a2fd9`. The exact annotated tag commit is
+recorded in the compatibility lock and each release manifest.
 
 ## Architecture
 
