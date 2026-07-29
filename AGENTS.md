@@ -21,9 +21,14 @@ It invokes exact bundle entry points and consumes their declared outputs and
 ## User release boundary
 
 The ordinary user path begins at top-level launchers and `START_HERE.txt`.
-Internal Workbench pins and producer provenance remain machine-verifiable
-inside the paired runtime; do not place commit inventories or engineering
-governance in user onboarding.
+CourseCraft Workbench is the upstream living library and development lab where
+the authoritative development copies of shared schemas, producer code,
+scripts, tests, experiments, technical writing, and documentation are
+curated. Only reviewed, verified, production-ready versions are promoted into
+downstream products. Define that boundary briefly when readers encounter the
+Workbench name, but keep internal pins and producer provenance
+machine-verifiable inside the paired runtime; do not place commit inventories
+or engineering governance in user onboarding.
 
 Every release must:
 

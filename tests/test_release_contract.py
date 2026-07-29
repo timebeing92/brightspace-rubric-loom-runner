@@ -25,6 +25,22 @@ def test_user_onboarding_names_both_doors_and_the_no_ai_boundary() -> None:
     assert "Privacy & Security" in text
 
 
+def test_workbench_is_defined_for_human_readers() -> None:
+    for relative in ("README.md", "ADOPTION_MAP.md", "NOTICE.md"):
+        text = " ".join(
+            (ROOT / relative).read_text(encoding="utf-8").split()
+        )
+        assert "upstream living library and development lab" in text
+        assert "production-ready versions" in text
+
+    readme = " ".join(
+        (ROOT / "README.md").read_text(encoding="utf-8").split()
+    )
+    assert "(living library + development lab)" in readme
+    assert "reviewed, production-ready tooling" in readme
+    assert "do not need to access, install, or operate" in readme
+
+
 def test_release_runtime_does_not_reimplement_rubric_semantics() -> None:
     python_files = list((ROOT / "launcher").glob("*.py"))
     source = "\n".join(path.read_text(encoding="utf-8") for path in python_files)
