@@ -12,7 +12,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Validate annotated tag and release identity
@@ -41,7 +41,7 @@ jobs:
               output.write(f"ref={record['bundle_ref']}\n")
               output.write(f"commit={record['bundle_commit']}\n")
           PY
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: ${{ steps.compatibility.outputs.repository }}
           ref: ${{ steps.compatibility.outputs.ref }}
@@ -51,11 +51,11 @@ jobs:
         run: |
           test "$(git -C brightspace-rubric-bundle rev-parse HEAD)" = \
             "${{ steps.compatibility.outputs.commit }}"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - run: python -m pip install -r requirements-dev.txt
-      - run: python -m pytest -q
+      - run: python -m pytest -q tests
       - name: Build release assets
         shell: bash
         run: |
@@ -70,7 +70,7 @@ jobs:
           cd dist
           sha256sum -c rubric-loom-v*.zip.sha256
           sha256sum -c rubric-loom-managed-v*.zip.sha256
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: rubric-loom-release-assets
           path: dist/*
