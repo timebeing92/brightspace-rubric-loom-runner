@@ -6,9 +6,10 @@
        width="620">
 </p>
 
-Rubric Loom is a guided local tool for people who need to inspect, revise, or
-move Brightspace rubrics without hand-editing D2L XML. It opens with two clear
-choices:
+Rubric Loom is a guided local tool for people who need to inspect, revise,
+draft, or move Brightspace rubrics without hand-editing D2L XML. It can
+deconstruct a Brightspace course export and package revised or newly drafted
+rubrics for later import. It opens with two clear choices:
 
 | Door | Bring | Take away |
 | --- | --- | --- |
@@ -16,15 +17,23 @@ choices:
 | **Weave** | A completed rubric in a supported DOCX table, Markdown table, or JSON format | A reviewed and validated rubric-only Brightspace import package, plus its mapping, diagnostics, and run receipt |
 
 Unravel can read one export or inventory a folder of exports in a single bulk
-run. Each course keeps its own output folder and run log. Weave shows the
-producer’s interpretation and scoring evidence before it builds anything,
-then requires the named approval `WEAVE`.
+run. Each course retains its own output folder and run log. Weave shows how
+its rules read the completed rubric source—including its content, scoring,
+and weights—before it builds anything, then requires the named approval
+`WEAVE`.
 
 Rubric Loom is purely deterministic software, running locally in Python. It is
 engineered against known Brightspace/D2L package structures. No AI model reads
 or interprets your files, and your files stay on your computer. The same input
 meets the same declared rules every time; an unfamiliar structure is reported
-instead of guessed.
+instead of guessed or inferred.
+
+If you encounter an error, please
+[open a GitHub issue](https://github.com/timebeing92/brightspace-rubric-loom-runner/issues)
+and include your operating system, whether you were using Unravel or Weave,
+the steps that led to the error, and the complete error message. Do not post
+course exports, institutional rubrics, learner data, or other sensitive
+course material.
 
 ## Download and start
 
