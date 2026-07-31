@@ -28,6 +28,21 @@ or interprets your files, and your files stay on your computer. The same input
 meets the same declared rules every time; an unfamiliar structure is reported
 instead of guessed or inferred.
 
+> [!IMPORTANT]
+> **Download the release, not the source-code ZIP.** Use **Releases** in the
+> repository sidebar and download `rubric-loom-managed-v<VERSION>.zip`. Do not
+> use the green **Code > Download ZIP** button; that archive omits the paired
+> Rubric Bundle engine.
+>
+> **macOS first launch:** unzip the release and try `Rubric Loom.command` once.
+> If macOS blocks it, open **System Settings > Privacy & Security**. Under
+> **Security**, click **Open**, then **Open Anyway**, enter your Mac login
+> password, and confirm the launch.
+>
+> See [Install, update, and troubleshoot Rubric Loom](INSTALL_AND_TROUBLESHOOT.md)
+> for the complete first-run workflow, Python and dependency behavior, update
+> and rollback commands, log locations, and product-specific troubleshooting.
+
 If you encounter an error, please
 [open a GitHub issue](https://github.com/timebeing92/brightspace-rubric-loom-runner/issues)
 and include your operating system, whether you were using Unravel or Weave,
@@ -37,25 +52,15 @@ course material.
 
 ## Download and start
 
-Use the
-[`brightspace-rubric-loom-runner` Releases page](https://github.com/timebeing92/brightspace-rubric-loom-runner/releases),
-not the green **Code > Download ZIP** button. GitHub’s source-code ZIP contains
-this repository alone; a Rubric Loom release contains the exact runner and
-Rubric Bundle version that were tested together.
-
 The recommended download is:
 
 `rubric-loom-managed-v<VERSION>.zip`
 
 Unzip it before opening the Loom. Then:
 
-- **macOS:** double-click `Rubric Loom.command`. If macOS blocks it, try once,
-  dismiss the warning, then open **System Settings > Privacy & Security**.
-  Scroll to **Security**, choose **Open Anyway**, authenticate, and confirm
-  **Open**. Apple's
-  [current instructions](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac)
-  note that **Open Anyway** is normally available for about an hour after the
-  blocked attempt.
+- **macOS:** double-click `Rubric Loom.command`. If macOS blocks the first
+  launch, use the authorization steps in the callout above or the linked
+  install guide.
 - **Windows:** double-click `Rubric Loom.bat`.
 - **Linux:** run `bash rubric_loom_launcher.sh`.
 
