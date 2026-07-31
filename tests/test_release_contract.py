@@ -25,6 +25,37 @@ def test_user_onboarding_names_both_doors_and_the_no_ai_boundary() -> None:
     assert "Privacy & Security" in text
 
 
+def test_readme_prominently_links_the_loom_install_guide() -> None:
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    assert "[!IMPORTANT]" in text
+    assert "rubric-loom-managed-v<VERSION>.zip" in text
+    assert "Code > Download ZIP" in text
+    assert "System Settings > Privacy & Security" in text
+    assert "click **Open**, then **Open Anyway**" in " ".join(text.split())
+    assert "(INSTALL_AND_TROUBLESHOOT.md)" in text
+    assert text.index("[!IMPORTANT]") < text.index("If you encounter an error")
+
+
+def test_loom_install_guide_is_product_specific_and_complete() -> None:
+    text = (ROOT / "INSTALL_AND_TROUBLESHOOT.md").read_text(encoding="utf-8")
+    normalized = " ".join(text.split())
+
+    assert "Install, update, and troubleshoot Rubric Loom" in text
+    assert "rubric-loom-managed-v<VERSION>.zip" in text
+    assert "Rubric Loom.command" in text
+    assert "Rubric Bundle engine" in normalized
+    assert "System Settings > Privacy & Security" in text
+    assert "click **Open**, then **Open Anyway**" in normalized
+    assert "Python 3.11 through 3.13" in text
+    assert "rubric_loom_launcher.sh --health" in text
+    assert "rubric_loom_launcher.sh --update" in text
+    assert "rubric_loom_launcher.sh --rollback" in text
+    assert "unravel_wizard.log" in text
+    assert "weave_wizard.log" in text
+    assert "attach the rubric" in text
+
+
 def test_workbench_is_defined_for_human_readers() -> None:
     for relative in ("README.md", "ADOPTION_MAP.md", "NOTICE.md"):
         text = " ".join(
