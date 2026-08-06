@@ -73,6 +73,13 @@ and install the pinned packages there—not into the system Python. Only when no
 supported Python is found does the launcher offer to install Python, and it
 asks first.
 
+After that one-time setup, later launches run directly from the existing
+private environment. The launcher first verifies that the cached interpreter
+can start on Python 3.11–3.13; a corrupt cache falls back to the supported
+bootstrap interpreter. The Loom also audits installed package versions against
+the paired bundle's exact dependency lock and offers a private refresh when an
+upgrade or damaged installation has drifted from it.
+
 The managed package keeps program versions and user work separate:
 
 ```text

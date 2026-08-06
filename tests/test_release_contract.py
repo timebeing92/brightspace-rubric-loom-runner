@@ -22,6 +22,7 @@ def test_user_onboarding_names_both_doors_and_the_no_ai_boundary() -> None:
     assert "does not import" not in text
     assert "cannot import" in text
     assert "Python itself is not reinstalled" in text
+    assert "Later launches reuse that environment directly" in text
     assert "Privacy & Security" in text
 
 
@@ -48,6 +49,7 @@ def test_loom_install_guide_is_product_specific_and_complete() -> None:
     assert "System Settings > Privacy & Security" in text
     assert "click **Open**, then **Open Anyway**" in normalized
     assert "Python 3.11 through 3.13" in text
+    assert "Later launches reuse that private environment directly" in text
     assert "rubric_loom_launcher.sh --health" in text
     assert "rubric_loom_launcher.sh --update" in text
     assert "rubric_loom_launcher.sh --rollback" in text
@@ -86,6 +88,28 @@ def test_release_runtime_does_not_reimplement_rubric_semantics() -> None:
         assert marker not in source
 
 
+def test_launchers_prefer_the_existing_private_runtime() -> None:
+    portable_shell = (ROOT / "rubric_loom.sh").read_text(encoding="utf-8")
+    portable_windows = (ROOT / "rubric_loom.ps1").read_text(encoding="utf-8")
+    managed_shell = (ROOT / "launcher/rubric_loom_launcher.sh").read_text(
+        encoding="utf-8"
+    )
+    managed_windows = (ROOT / "launcher/rubric_loom_launcher.ps1").read_text(
+        encoding="utf-8"
+    )
+
+    assert 'candidates+=("$RUBRIC_LOOM_VENV/bin/python")' in portable_shell
+    assert 'Join-Path $env:RUBRIC_LOOM_VENV "Scripts\\python.exe"' in (
+        portable_windows
+    )
+    assert 'candidates+=("$HERE/user-data/runtime/.venv/bin/python")' in (
+        managed_shell
+    )
+    assert 'Join-Path $Here "user-data\\runtime\\.venv\\Scripts\\python.exe"' in (
+        managed_windows
+    )
+
+
 def test_manifest_contract_is_specific_to_rubric_loom() -> None:
     assert release.RELEASE_SCHEMA == (
         "coursecraft.rubric_loom_runner_release/1"
@@ -102,9 +126,9 @@ def test_release_identity_matches_the_exact_bundle_lock() -> None:
         (ROOT / "BUNDLE_COMPATIBILITY.json").read_text(encoding="utf-8")
     )
     assert compatibility["runner_version"] == version
-    assert compatibility["bundle_version"] == "1.3.2"
-    assert compatibility["bundle_ref"] == "v1.3.2"
+    assert compatibility["bundle_version"] == "1.3.3"
+    assert compatibility["bundle_ref"] == "v1.3.3"
     assert compatibility["bundle_commit"] == (
-        "8c97c7210a816a02e2487b7ae8b4696bc3236618"
+        "c9f06def134c01800d6d169b99693b4b53abe564"
     )
-    assert compatibility["status"] == "released"
+    assert compatibility["status"] == "prepared"

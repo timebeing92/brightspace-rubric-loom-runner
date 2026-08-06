@@ -7,6 +7,14 @@ set -euo pipefail
 # NOTE: no cd — the Loom resolves its own files absolutely, and staying in
 # the caller's directory lets relative --export paths work as expected.
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGE_ROOT="$(cd "$HERE/.." && pwd)"
+if [ -f "$PACKAGE_ROOT/RELEASE_MANIFEST.json" ]; then
+  DEFAULT_USER_DATA="$PACKAGE_ROOT/user-data"
+else
+  DEFAULT_USER_DATA="$HERE/user-data"
+fi
+export RUBRIC_LOOM_USER_DATA="${RUBRIC_LOOM_USER_DATA:-$DEFAULT_USER_DATA}"
+export RUBRIC_LOOM_VENV="${RUBRIC_LOOM_VENV:-$RUBRIC_LOOM_USER_DATA/runtime/.venv}"
 
 MIN_MAJOR=3
 MIN_MINOR=11
@@ -30,6 +38,7 @@ PY
 
 find_python() {
   local candidates=()
+  candidates+=("$RUBRIC_LOOM_VENV/bin/python")
   if [ -n "${PYTHON:-}" ]; then
     candidates+=("$PYTHON")
   fi
@@ -121,15 +130,7 @@ if ! PY="$(find_python)"; then
   fi
 fi
 
-PACKAGE_ROOT="$(cd "$HERE/.." && pwd)"
 BUNDLE_DIR="${RUBRIC_LOOM_BUNDLE_DIR:-$PACKAGE_ROOT/brightspace-rubric-bundle}"
-if [ -f "$PACKAGE_ROOT/RELEASE_MANIFEST.json" ]; then
-  DEFAULT_USER_DATA="$PACKAGE_ROOT/user-data"
-else
-  DEFAULT_USER_DATA="$HERE/user-data"
-fi
-export RUBRIC_LOOM_USER_DATA="${RUBRIC_LOOM_USER_DATA:-$DEFAULT_USER_DATA}"
-export RUBRIC_LOOM_VENV="${RUBRIC_LOOM_VENV:-$RUBRIC_LOOM_USER_DATA/runtime/.venv}"
 export RUBRIC_LOOM_RELEASE_REPOSITORY="${RUBRIC_LOOM_RELEASE_REPOSITORY:-timebeing92/brightspace-rubric-loom-runner}"
 if [ -z "${RUBRIC_LOOM_INSTALLED_VERSION:-}" ] && [ -f "$HERE/VERSION" ]; then
   RUBRIC_LOOM_INSTALLED_VERSION="$(tr -d '[:space:]' < "$HERE/VERSION")"

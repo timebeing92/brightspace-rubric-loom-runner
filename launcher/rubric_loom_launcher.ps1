@@ -41,6 +41,8 @@ function New-PythonSelection([string[]]$Command) {
 
 function Find-Python {
     $candidates = @()
+    $privatePython = Join-Path $Here "user-data\runtime\.venv\Scripts\python.exe"
+    if (Test-Path $privatePython) { $candidates += ,@($privatePython) }
     if ($env:PYTHON) { $candidates += ,@($env:PYTHON) }
     if (Get-Command py -ErrorAction SilentlyContinue) {
         foreach ($ver in "-3.13", "-3.12", "-3.11", "-3") {

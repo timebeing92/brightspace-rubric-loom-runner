@@ -13,13 +13,53 @@ import install_state
 import install_release
 import network_update
 
-LAUNCHER_VERSION = "1.0.1"
+LAUNCHER_VERSION = "1.0.2"
 RESTART_EXIT_CODE = 75
 MAX_RESTARTS = 1
+PYTHON_PROBE = (
+    "import sys; "
+    "raise SystemExit(0 if (3, 11) <= sys.version_info[:2] < (3, 14) else 1)"
+)
 
 
 def default_install_root() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def private_runtime_python(install_root: Path) -> Path:
+    environment = install_root / "user-data" / "runtime" / ".venv"
+    if os.name == "nt":
+        return environment / "Scripts" / "python.exe"
+    return environment / "bin" / "python"
+
+
+def python_runtime_usable(candidate: Path) -> bool:
+    """Verify that a cached interpreter starts and has a supported version."""
+
+    try:
+        result = subprocess.run(
+            [str(candidate), "-I", "-c", PYTHON_PROBE],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return result.returncode == 0
+
+
+def launch_python(install_root: Path) -> Path:
+    """Reuse the private runtime after its one-time bootstrap."""
+
+    candidate = private_runtime_python(install_root)
+    try:
+        if candidate.is_file() and python_runtime_usable(candidate):
+            return candidate
+    except OSError:
+        pass
+    return Path(sys.executable)
 
 
 def current_command(
@@ -31,7 +71,7 @@ def current_command(
     root, _ = install_state.validate_installed_version(install_root, version)
     bundle = root / "brightspace-rubric-bundle"
     command = [
-        sys.executable,
+        str(launch_python(install_root)),
         str(bundle / "scripts" / "rubric_loom_wizard.py"),
         *loom_args,
     ]

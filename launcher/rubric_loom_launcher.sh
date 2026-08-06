@@ -25,6 +25,7 @@ PY
 
 find_python() {
   local candidates=()
+  candidates+=("$HERE/user-data/runtime/.venv/bin/python")
   if [ -n "${PYTHON:-}" ]; then
     candidates+=("$PYTHON")
   fi

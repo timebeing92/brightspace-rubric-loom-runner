@@ -6,6 +6,19 @@
 # staying in the caller's directory lets relative --export paths work.
 $ErrorActionPreference = "Stop"
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$PackageRoot = Split-Path -Parent $Here
+$ReleaseManifest = Join-Path $PackageRoot "RELEASE_MANIFEST.json"
+$DefaultUserData = if (Test-Path $ReleaseManifest) {
+    Join-Path $PackageRoot "user-data"
+} else {
+    Join-Path $Here "user-data"
+}
+if (-not $env:RUBRIC_LOOM_USER_DATA) {
+    $env:RUBRIC_LOOM_USER_DATA = $DefaultUserData
+}
+if (-not $env:RUBRIC_LOOM_VENV) {
+    $env:RUBRIC_LOOM_VENV = Join-Path $env:RUBRIC_LOOM_USER_DATA "runtime\.venv"
+}
 
 $MinVersion = [Version]"3.11"
 $MaxVersion = [Version]"3.14"
@@ -48,6 +61,8 @@ function New-PythonSelection([string[]]$Command) {
 
 function Find-Python {
     $candidates = @()
+    $privatePython = Join-Path $env:RUBRIC_LOOM_VENV "Scripts\python.exe"
+    if (Test-Path $privatePython) { $candidates += ,@($privatePython) }
     if ($env:PYTHON) { $candidates += ,@($env:PYTHON) }
     if (Get-Command py -ErrorAction SilentlyContinue) {
         foreach ($ver in "-3.13", "-3.12", "-3.11", "-3") {
@@ -97,23 +112,10 @@ if (-not $Python) {
 $PythonCmd = $Python.Executable
 $PythonArgs = @($Python.PrefixArguments)
 
-$PackageRoot = Split-Path -Parent $Here
 $BundleDir = if ($env:RUBRIC_LOOM_BUNDLE_DIR) {
     $env:RUBRIC_LOOM_BUNDLE_DIR
 } else {
     Join-Path $PackageRoot "brightspace-rubric-bundle"
-}
-$ReleaseManifest = Join-Path $PackageRoot "RELEASE_MANIFEST.json"
-$DefaultUserData = if (Test-Path $ReleaseManifest) {
-    Join-Path $PackageRoot "user-data"
-} else {
-    Join-Path $Here "user-data"
-}
-if (-not $env:RUBRIC_LOOM_USER_DATA) {
-    $env:RUBRIC_LOOM_USER_DATA = $DefaultUserData
-}
-if (-not $env:RUBRIC_LOOM_VENV) {
-    $env:RUBRIC_LOOM_VENV = Join-Path $env:RUBRIC_LOOM_USER_DATA "runtime\.venv"
 }
 if (-not $env:RUBRIC_LOOM_RELEASE_REPOSITORY) {
     $env:RUBRIC_LOOM_RELEASE_REPOSITORY = "timebeing92/brightspace-rubric-loom-runner"

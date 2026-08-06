@@ -80,7 +80,10 @@ On the first run, Rubric Loom looks for an existing supported Python
 supported copy is already present. Before asking you to choose Unravel or
 Weave, the Loom checks its required support packages and, if needed, offers
 to create a private environment inside user-data/runtime. It asks before
-installing anything. Your inputs and outputs remain on this computer.
+installing anything. Later launches reuse that environment directly. If an
+upgrade changes the exact dependency lock, or the cached runtime is damaged,
+the Loom offers to refresh only that private environment. Your inputs and
+outputs remain on this computer.
 
 If macOS blocks "Rubric Loom.command", try to open it once and dismiss the
 warning. Then open System Settings > Privacy & Security, scroll to Security,
