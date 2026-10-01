@@ -27,6 +27,20 @@ jobs:
       - run: python -m compileall -q launcher scripts tests
       - run: git diff --check
 
+  runtime-recovery:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest -q tests/test_launcher_runtime_recovery.py
+
   packages:
     runs-on: ubuntu-latest
     steps:
@@ -44,9 +58,15 @@ jobs:
           record = json.loads(
               Path("BUNDLE_COMPATIBILITY.json").read_text(encoding="utf-8")
           )
+          if record["status"] not in {"prepared", "released"}:
+              raise SystemExit("unknown bundle compatibility status")
+          checkout_ref = (
+              record["bundle_commit"] if record["status"] == "prepared"
+              else record["bundle_ref"]
+          )
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
               output.write(f"repository={record['bundle_repository']}\n")
-              output.write(f"ref={record['bundle_ref']}\n")
+              output.write(f"ref={checkout_ref}\n")
               output.write(f"commit={record['bundle_commit']}\n")
           PY
       - uses: actions/checkout@v7

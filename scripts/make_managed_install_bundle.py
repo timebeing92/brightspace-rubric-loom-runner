@@ -30,7 +30,9 @@ installation and reuses it. Python itself is not reinstalled when a supported
 copy is already present. Before asking you to choose Unravel or Weave, the
 Loom checks its required support packages and, if needed, offers to create a
 private environment under user-data/runtime. It asks before installing
-anything.
+anything. Later launches reuse that environment directly. If an upgrade changes
+the exact dependency lock, or the cached runtime is damaged, the Loom offers to
+refresh only that private environment.
 
 Rubric Loom does not use AI, upload course material, import into Brightspace,
 or attach rubrics to activities.

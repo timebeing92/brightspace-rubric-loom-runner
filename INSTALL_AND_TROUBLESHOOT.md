@@ -56,6 +56,11 @@ local IT.
   support packages. If necessary, it offers to create a private environment
   under `user-data/runtime/.venv`; packages are not installed into the system
   Python.
+- Later launches reuse that private environment directly. The launcher verifies
+  that its interpreter starts on Python 3.11 through 3.13, and the Loom audits
+  installed package versions against the paired release's exact lock. A corrupt
+  interpreter falls back to the supported bootstrap Python; a missing, damaged,
+  or version-drifted runtime is offered a private refresh.
 - Rubric Loom runs locally. It does not send course material to an AI service
   or import anything into Brightspace.
 

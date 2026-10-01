@@ -184,6 +184,57 @@ def test_stable_launcher_passes_the_managed_data_boundary(tmp_path: Path) -> Non
     assert capture["version"] == "1.0.0"
 
 
+def test_stable_launcher_reuses_private_runtime_after_bootstrap(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    install_root = tmp_path / "managed"
+    write_installed_version(install_root, "1.0.0")
+    install_state.activate_version(install_root, "1.0.0")
+    private_python = stable_launcher.private_runtime_python(install_root)
+    private_python.parent.mkdir(parents=True, exist_ok=True)
+    private_python.write_bytes(b"private runtime placeholder")
+    monkeypatch.setattr(
+        stable_launcher,
+        "python_runtime_usable",
+        lambda candidate: candidate == private_python,
+    )
+
+    _, command, environment = stable_launcher.current_command(install_root, [])
+
+    assert command[0] == str(private_python)
+    assert environment["RUBRIC_LOOM_VENV"] == str(private_python.parent.parent)
+
+
+def test_stable_launcher_rejects_a_corrupted_private_runtime(
+    tmp_path: Path,
+) -> None:
+    install_root = tmp_path / "managed"
+    write_installed_version(install_root, "1.0.0")
+    install_state.activate_version(install_root, "1.0.0")
+    private_python = stable_launcher.private_runtime_python(install_root)
+    private_python.parent.mkdir(parents=True, exist_ok=True)
+    private_python.write_bytes(b"this is not a Python executable")
+    private_python.chmod(0o755)
+
+    _, command, environment = stable_launcher.current_command(install_root, [])
+
+    assert command[0] == sys.executable
+    assert environment["RUBRIC_LOOM_VENV"] == str(private_python.parent.parent)
+
+
+def test_stable_launcher_uses_bootstrap_python_before_private_runtime_exists(
+    tmp_path: Path,
+) -> None:
+    install_root = tmp_path / "managed"
+    write_installed_version(install_root, "1.0.0")
+    install_state.activate_version(install_root, "1.0.0")
+
+    _, command, _ = stable_launcher.current_command(install_root, [])
+
+    assert command[0] == sys.executable
+
+
 def test_pointer_cannot_escape_and_current_version_cannot_be_removed(
     tmp_path: Path,
 ) -> None:

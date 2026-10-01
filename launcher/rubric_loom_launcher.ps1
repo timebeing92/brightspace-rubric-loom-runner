@@ -14,19 +14,7 @@ function Read-YesNo([string]$Prompt, [bool]$Default = $false) {
     return $reply -match "^(y|yes)$"
 }
 
-function Test-Python([string[]]$Command) {
-    try {
-        $probeArgs = @()
-        if ($Command.Count -gt 1) { $probeArgs = @($Command[1..($Command.Count - 1)]) }
-        $probeArgs += @("-c", "import sys; print('.'.join(map(str, sys.version_info[:2])))")
-        $probe = & $Command[0] @probeArgs 2>$null
-        if ($LASTEXITCODE -eq 0 -and $probe) {
-            $version = [Version]("$probe".Trim())
-            return ($version -ge $MinVersion -and $version -lt $MaxVersion)
-        }
-    } catch { }
-    return $false
-}
+. (Join-Path $Here "launcher\runtime_probe.ps1")
 
 function New-PythonSelection([string[]]$Command) {
     $prefixArguments = @()
@@ -41,6 +29,8 @@ function New-PythonSelection([string[]]$Command) {
 
 function Find-Python {
     $candidates = @()
+    $privatePython = Join-Path $Here "user-data\runtime\.venv\Scripts\python.exe"
+    if (Test-Path $privatePython) { $candidates += ,@($privatePython) }
     if ($env:PYTHON) { $candidates += ,@($env:PYTHON) }
     if (Get-Command py -ErrorAction SilentlyContinue) {
         foreach ($ver in "-3.13", "-3.12", "-3.11", "-3") {
@@ -82,5 +72,5 @@ if (-not $Python) {
 $PythonCmd = $Python.Executable
 $PythonArgs = @($Python.PrefixArguments)
 
-& $PythonCmd @PythonArgs (Join-Path $Here "launcher\stable_launcher.py") --install-root $Here @args
-exit $LASTEXITCODE
+$LoomArguments = @($PythonArgs) + @((Join-Path $Here "launcher\stable_launcher.py"), "--install-root", $Here) + @($args)
+exit (Invoke-LoomPython -Executable $PythonCmd -Arguments $LoomArguments)

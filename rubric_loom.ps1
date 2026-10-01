@@ -6,6 +6,19 @@
 # staying in the caller's directory lets relative --export paths work.
 $ErrorActionPreference = "Stop"
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$PackageRoot = Split-Path -Parent $Here
+$ReleaseManifest = Join-Path $PackageRoot "RELEASE_MANIFEST.json"
+$DefaultUserData = if (Test-Path $ReleaseManifest) {
+    Join-Path $PackageRoot "user-data"
+} else {
+    Join-Path $Here "user-data"
+}
+if (-not $env:RUBRIC_LOOM_USER_DATA) {
+    $env:RUBRIC_LOOM_USER_DATA = $DefaultUserData
+}
+if (-not $env:RUBRIC_LOOM_VENV) {
+    $env:RUBRIC_LOOM_VENV = Join-Path $env:RUBRIC_LOOM_USER_DATA "runtime\.venv"
+}
 
 $MinVersion = [Version]"3.11"
 $MaxVersion = [Version]"3.14"
@@ -19,21 +32,7 @@ function Read-YesNo([string]$Prompt, [bool]$Default = $false) {
     return $reply -match "^(y|yes)$"
 }
 
-function Test-Python([string[]]$Command) {
-    # Probe the interpreter's version; also filters out the Microsoft Store
-    # "python" alias, which fails this probe instead of running it.
-    try {
-        $probeArgs = @()
-        if ($Command.Count -gt 1) { $probeArgs = @($Command[1..($Command.Count - 1)]) }
-        $probeArgs += @("-c", "import sys; print('.'.join(map(str, sys.version_info[:2])))")
-        $probe = & $Command[0] @probeArgs 2>$null
-        if ($LASTEXITCODE -eq 0 -and $probe) {
-            $version = [Version]("$probe".Trim())
-            return ($version -ge $MinVersion -and $version -lt $MaxVersion)
-        }
-    } catch { }
-    return $false
-}
+. (Join-Path $Here "launcher\runtime_probe.ps1")
 
 function New-PythonSelection([string[]]$Command) {
     $prefixArguments = @()
@@ -48,6 +47,8 @@ function New-PythonSelection([string[]]$Command) {
 
 function Find-Python {
     $candidates = @()
+    $privatePython = Join-Path $env:RUBRIC_LOOM_VENV "Scripts\python.exe"
+    if (Test-Path $privatePython) { $candidates += ,@($privatePython) }
     if ($env:PYTHON) { $candidates += ,@($env:PYTHON) }
     if (Get-Command py -ErrorAction SilentlyContinue) {
         foreach ($ver in "-3.13", "-3.12", "-3.11", "-3") {
@@ -97,23 +98,10 @@ if (-not $Python) {
 $PythonCmd = $Python.Executable
 $PythonArgs = @($Python.PrefixArguments)
 
-$PackageRoot = Split-Path -Parent $Here
 $BundleDir = if ($env:RUBRIC_LOOM_BUNDLE_DIR) {
     $env:RUBRIC_LOOM_BUNDLE_DIR
 } else {
     Join-Path $PackageRoot "brightspace-rubric-bundle"
-}
-$ReleaseManifest = Join-Path $PackageRoot "RELEASE_MANIFEST.json"
-$DefaultUserData = if (Test-Path $ReleaseManifest) {
-    Join-Path $PackageRoot "user-data"
-} else {
-    Join-Path $Here "user-data"
-}
-if (-not $env:RUBRIC_LOOM_USER_DATA) {
-    $env:RUBRIC_LOOM_USER_DATA = $DefaultUserData
-}
-if (-not $env:RUBRIC_LOOM_VENV) {
-    $env:RUBRIC_LOOM_VENV = Join-Path $env:RUBRIC_LOOM_USER_DATA "runtime\.venv"
 }
 if (-not $env:RUBRIC_LOOM_RELEASE_REPOSITORY) {
     $env:RUBRIC_LOOM_RELEASE_REPOSITORY = "timebeing92/brightspace-rubric-loom-runner"
@@ -131,5 +119,5 @@ if (-not (Test-Path $LoomEntry)) {
     exit 1
 }
 
-& $PythonCmd @PythonArgs $LoomEntry @args
-exit $LASTEXITCODE
+$LoomArguments = @($PythonArgs) + @($LoomEntry) + @($args)
+exit (Invoke-LoomPython -Executable $PythonCmd -Arguments $LoomArguments)
