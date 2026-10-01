@@ -15,7 +15,10 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 HANDOFF = '''import json, sys
-print("HANDOFF=" + json.dumps({"prefix": sys.prefix, "args": sys.argv[1:]}))
+answer = sys.stdin.readline().strip()
+print("HANDOFF=" + json.dumps({"prefix": sys.prefix, "args": sys.argv[1:], "answer": answer}))
+print("synthetic terminal diagnostic", file=sys.stderr)
+raise SystemExit(7)
 '''
 
 
@@ -65,12 +68,14 @@ def test_entry_point_reuses_or_recovers_private_runtime(
     command = [executable, str(entry), *args] if shell == "bash" else [executable, "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(entry), *args]
     started = time.monotonic()
     try:
-        result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=15, check=False)
-        assert result.returncode == 0, result.stdout + result.stderr
+        result = subprocess.run(command, env=env, input="operator response\n", capture_output=True, text=True, timeout=15, check=False)
+        assert result.returncode == 7, result.stdout + result.stderr
         handoff = json.loads(next(line[8:] for line in result.stdout.splitlines() if line.startswith("HANDOFF=")))
         expected = environment if state == "healthy" else Path(sys.prefix)
         assert Path(handoff["prefix"]).resolve() == expected.resolve()
         assert handoff["args"][-len(args):] == args
+        assert handoff["answer"] == "operator response"
+        assert "synthetic terminal diagnostic" in result.stderr
         assert time.monotonic() - started < 15
     finally:
         if pid_file.exists():

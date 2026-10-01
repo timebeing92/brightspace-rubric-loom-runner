@@ -4,6 +4,6 @@
   "bundle_repository": "timebeing92/brightspace-rubric-bundle",
   "bundle_version": "1.3.3",
   "bundle_ref": "v1.3.3",
-  "bundle_commit": "c9f06def134c01800d6d169b99693b4b53abe564",
-  "status": "prepared"
+  "bundle_commit": "bec70896f0151a10b646f2a3d0783b4594250f59",
+  "status": "released"
 }

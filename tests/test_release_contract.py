@@ -129,6 +129,6 @@ def test_release_identity_matches_the_exact_bundle_lock() -> None:
     assert compatibility["bundle_version"] == "1.3.3"
     assert compatibility["bundle_ref"] == "v1.3.3"
     assert compatibility["bundle_commit"] == (
-        "c9f06def134c01800d6d169b99693b4b53abe564"
+        "bec70896f0151a10b646f2a3d0783b4594250f59"
     )
-    assert compatibility["status"] == "prepared"
+    assert compatibility["status"] == "released"
