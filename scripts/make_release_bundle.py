@@ -56,6 +56,8 @@ RUNNER_RUNTIME_FILES = (
     "launcher/network_update.py",
     "launcher/rubric_loom_launcher.sh",
     "launcher/rubric_loom_launcher.ps1",
+    "launcher/runtime_probe.sh",
+    "launcher/runtime_probe.ps1",
 )
 
 START_HERE = """\

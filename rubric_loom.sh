@@ -28,13 +28,7 @@ for arg in "$@"; do
   esac
 done
 
-python_ok() {
-  local py="$1"
-  "$py" - <<'PY' >/dev/null 2>&1
-import sys
-raise SystemExit(0 if (3, 11) <= sys.version_info[:2] < (3, 14) else 1)
-PY
-}
+source "$HERE/launcher/runtime_probe.sh"
 
 find_python() {
   local candidates=()

@@ -32,21 +32,7 @@ function Read-YesNo([string]$Prompt, [bool]$Default = $false) {
     return $reply -match "^(y|yes)$"
 }
 
-function Test-Python([string[]]$Command) {
-    # Probe the interpreter's version; also filters out the Microsoft Store
-    # "python" alias, which fails this probe instead of running it.
-    try {
-        $probeArgs = @()
-        if ($Command.Count -gt 1) { $probeArgs = @($Command[1..($Command.Count - 1)]) }
-        $probeArgs += @("-c", "import sys; print('.'.join(map(str, sys.version_info[:2])))")
-        $probe = & $Command[0] @probeArgs 2>$null
-        if ($LASTEXITCODE -eq 0 -and $probe) {
-            $version = [Version]("$probe".Trim())
-            return ($version -ge $MinVersion -and $version -lt $MaxVersion)
-        }
-    } catch { }
-    return $false
-}
+. (Join-Path $Here "launcher\runtime_probe.ps1")
 
 function New-PythonSelection([string[]]$Command) {
     $prefixArguments = @()
