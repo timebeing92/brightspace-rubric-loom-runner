@@ -1,5 +1,5 @@
 # Shared bounded startup probe for Windows PowerShell 5.1 and PowerShell 7.
-function ConvertTo-ProbeArgument([string]$Value) {
+function ConvertTo-PythonArgument([string]$Value) {
     # ProcessStartInfo.Arguments uses Windows command-line quoting on 5.1;
     # ArgumentList is only available on newer .NET runtimes.
     $escaped = $Value -replace '(\\*)"', '$1$1\"'
@@ -15,7 +15,7 @@ function Test-Python([string[]]$Command) {
         if ($Command.Count -gt 1) { $probeArgs = @($Command[1..($Command.Count - 1)]) }
         $probeArgs += @("-I", "-c", "import sys; raise SystemExit(0 if (3, 11) <= sys.version_info[:2] < (3, 14) else 1)")
         $process.StartInfo.FileName = $Command[0]
-        $process.StartInfo.Arguments = ($probeArgs | ForEach-Object { ConvertTo-ProbeArgument $_ }) -join " "
+        $process.StartInfo.Arguments = ($probeArgs | ForEach-Object { ConvertTo-PythonArgument $_ }) -join " "
         $process.StartInfo.UseShellExecute = $false
         $process.StartInfo.CreateNoWindow = $true
         $process.StartInfo.RedirectStandardInput = $true
@@ -41,6 +41,23 @@ function Test-Python([string[]]$Command) {
                 }
             } catch { }
         }
+        $process.Dispose()
+    }
+}
+
+function Invoke-LoomPython([string]$Executable, [string[]]$Arguments) {
+    # Windows PowerShell 5.1's native argument marshalling can split values
+    # such as --label="two words". Use the same explicit quoting as the probe,
+    # while inheriting the terminal streams for the interactive Loom session.
+    $process = New-Object System.Diagnostics.Process
+    try {
+        $process.StartInfo.FileName = $Executable
+        $process.StartInfo.Arguments = ($Arguments | ForEach-Object { ConvertTo-PythonArgument $_ }) -join " "
+        $process.StartInfo.UseShellExecute = $false
+        $null = $process.Start()
+        $process.WaitForExit()
+        return $process.ExitCode
+    } finally {
         $process.Dispose()
     }
 }

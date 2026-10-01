@@ -76,5 +76,7 @@ def test_entry_point_reuses_or_recovers_private_runtime(
         if pid_file.exists():
             try:
                 os.kill(int(pid_file.read_text()), signal.SIGTERM)
-            except (ProcessLookupError, PermissionError):
+            except OSError:
+                # Windows reports an already-terminated probe as WinError 87,
+                # rather than POSIX's ProcessLookupError.
                 pass

@@ -119,5 +119,5 @@ if (-not (Test-Path $LoomEntry)) {
     exit 1
 }
 
-& $PythonCmd @PythonArgs $LoomEntry @args
-exit $LASTEXITCODE
+$LoomArguments = @($PythonArgs) + @($LoomEntry) + @($args)
+exit (Invoke-LoomPython -Executable $PythonCmd -Arguments $LoomArguments)

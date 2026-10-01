@@ -72,5 +72,5 @@ if (-not $Python) {
 $PythonCmd = $Python.Executable
 $PythonArgs = @($Python.PrefixArguments)
 
-& $PythonCmd @PythonArgs (Join-Path $Here "launcher\stable_launcher.py") --install-root $Here @args
-exit $LASTEXITCODE
+$LoomArguments = @($PythonArgs) + @((Join-Path $Here "launcher\stable_launcher.py"), "--install-root", $Here) + @($args)
+exit (Invoke-LoomPython -Executable $PythonCmd -Arguments $LoomArguments)
